@@ -14,7 +14,8 @@ def docker_install():
 					return 'Not installed !', outd[1]
 		else:
 			return 'Docker-ce already installed !'
+	else:
+		return 'failed'
 
-out = list(docker_install())
-for x in out:
-	print(x)
+out = docker_install()
+print(out)
