@@ -1,5 +1,71 @@
 import subprocess as sb
 
+def file_handeling(file_path, ip, namenode):
+	file = open("{}".format(file_path), 'r')
+	string_list = file.readlines()
+	file.close()
+
+	index_initial = string_list.index('<configuration>\n')
+	index_final = string_list.index('</configuration>\n')
+
+	del string_list[index_initial+1:index_final]
+	if file_path == '/etc/hadoop/hdfs-site.xml':
+		string_list.insert(index_initial + 1, "<property>\n")
+		if namenode == True:
+			string_list.insert(index_initial + 2, "<name>dfs.name.dir</name>\n")
+		else:
+			string_list.insert(index_initial + 2, "<name>dfs.data.dir</name>\n")
+		string_list.insert(index_initial + 3, "<value>/nn</value>\n")
+		string_list.insert(index_initial + 4, "</property>\n")
+	elif file_path == '/etc/hadoop/core-site.xml':
+		string_list.insert(index_initial + 1, "<property>\n")
+		string_list.insert(index_initial + 2, "<name>fs.default.name</name>\n")
+		string_list.insert(index_initial + 3, "<value>hdfs://{}:9001</value>\n".format(ip))
+		string_list.insert(index_initial + 4, "</property>\n")
+	else: sb.call('echo "configuration file not found"', shell=True)
+
+	file = open("{}".format(file_path), "w")
+	new_file_content = "".join(string_list)
+	file.write(new_file_content)
+	file.close()
+
+def configure_namenode_hadoop():
+	ip = input('Enter the ip of namenode : ')
+	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
+	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', True)
+	sb.call("echo 'ConfiguredConfigured hdfs-site.xml file...'", shell=True)
+	sb.call("echo 'Configuring core-site.xml file...'", shell=True)
+	file_handeling('/etc/hadoop/core-site.xml', ip, True)
+	sb.call("echo 'Configured core-site.xml file...'", shell=True)
+	sb.call("echo 'Formatting Namenode...'", shell=True)
+	out = sb.getstatusoutput("echo 'Y' | hadoop namenode -format")
+	if out[0] == 0:
+		sb.call("echo 'Namenode successfully fomatted !'", shell=True)
+	else: print('Something went Wrong !')
+	sb.call("echo 'Starting Namenode...'", shell=True)
+	sb.call("echo 3 > /proc/sys/vm/drop_caches", shell=True)
+	out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
+	if out[0] == 0:
+		sb.call("echo 'Namenode started successfully !'", shell=True)
+	else: print('Something went Wrong !')
+
+def configure_datanodes_hadoop():
+	ip = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
+	Type = input('Type of Datanode AWS Instance(1)/local(2): ')
+	
+
+
+
+
+
+my_file = open("data.txt", "w")
+new_file_contents = "".join(string_list)
+Convert `string_list` to a single string
+
+my_file.write(new_file_contents)
+my_file.close()
+
+
 def docker_install():
 	output = sb.getstatusoutput('rpm -q docker-ce')
 	if output[0] == 1:
