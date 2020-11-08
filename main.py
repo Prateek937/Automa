@@ -49,7 +49,11 @@ def configure_namenode_hadoop(Type):
 	sb.call("echo 'Starting Namenode...'", shell=True)
 	sb.call("echo 3 > /proc/sys/vm/drop_caches", shell=True)
 	out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
-	if out[0] == 0:
+	
+	if 'running' in out[1]:
+		sb.call("hadoop-daemon.sh stop namenode",shell=True)
+		out = getstatusoutput("hadoop-daemon.sh start namenode")
+	elif out[0] == 0:
 		sb.call("echo 'Namenode started successfully !'", shell=True)
 	else:
 		print('Something went Wrong !')
