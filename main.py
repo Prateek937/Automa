@@ -1,4 +1,6 @@
 import subprocess as sb
+from time import sleep
+import os
 
 def file_handeling(file_path, ip, namenode):
 	file = open("{}".format(file_path), 'r')
@@ -34,18 +36,29 @@ def configure_namenode_hadoop(Type):
 		ip = '0.0.0.0'
 	#else:
 	#	ip = input('Enter the ip of namenode : ')
+	sleep(1)
+	os.system('tput setaf 3')
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
+
 	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', True)
+	sleep(1)
 	sb.call("echo 'ConfiguredConfigured hdfs-site.xml file...'", shell=True)
+	sleep(1)
 	sb.call("echo 'Configuring core-site.xml file...'", shell=True)
 
 	file_handeling('/etc/hadoop/core-site.xml', ip, True)
+	sleep(1)
 	sb.call("echo 'Configured core-site.xml file...'", shell=True)
+	sleep(1)
 	sb.call("echo 'Formatting Namenode...'", shell=True)
 	out = sb.getstatusoutput("echo 'Y' | hadoop namenode -format")
 	if out[0] == 0:
+		
 		sb.call("echo 'Namenode successfully fomatted !'", shell=True)
-	else: print('Something went Wrong !')
+	else:
+		os.system('tput setaf 1') 
+		print('Something went Wrong while formatting !')
+	sleep(1)
 	sb.call("echo 'Starting Namenode...'", shell=True)
 	sb.call("echo 3 > /proc/sys/vm/drop_caches", shell=True)
 	out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
@@ -54,109 +67,135 @@ def configure_namenode_hadoop(Type):
 		sb.getstatusoutput("hadoop-daemon.sh stop namenode")
 		out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
 	if out[0] == 0:
+		os.system('tput setaf 2')
 		sb.call("echo 'Namenode started successfully !'", shell=True)
 	else:
+		os.system('tput setaf 1')
 		print('Something went Wrong !')
 		print(out[1])
+		os.system('tput setaf 7')
 
-def configure_datanodes_hadoop(Type):
-	ippp = input("Enter the ip of namenode : ")
-	if Type == 1:
-		file = open('/home/ec2-user/Automa/ip.txt', 'w')
-		file.write(ippp)
-		file.close()
-	ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
-	print(ips)
+def configure_datanodes_hadoop(Type, ips):
+	# ippp = input("Enter the ip of namenode : ")
+	# if Type == 1:
+	# 	file = open('/home/ec2-user/Automa/ip.txt', 'w')
+	# 	file.write(ippp)
+	# 	file.close()
+	
 
 	for ip in ips:
-
+		sleep(1)
+		print("[{}]".format(ip))
 		if Type == 1:
 			sb.getoutput('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3" < /home/ec2-user/Automa/gitd.py'.format(ip))
 			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 /home/ec2-user/Automa/datanode.py"'.format(ip), shell=True)
-		else:
-			sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)
-def configure_cluster():
+		#else:
+		#	sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)
+def configure_cluster(ips):
 	configure_namenode_hadoop(1)
-	configure_datanodes_hadoop(1)
+	configure_datanodes_hadoop(1,ips)
 	sb.call("hadoop dfsadmin -report", shell=True)
 
 def docker_install():
 	output = sb.getstatusoutput('rpm -q docker-ce')
 	if output[0] == 1:
 		if 'not installed' in output[1]:
+			sleep(1)
+			os.system('tput setaf 3')
 			sb.call("echo 'Fetching Repository...'", shell=True)
 
 			sb.call("echo 'y' | cp /root/dockercw123.repo /etc/yum.repos.d/", shell=True)
-			
+			sleep(1)
 			sb.call("echo 'Downloading docker-ce, please wait ...'", shell=True)
-			sb.call("echo 'Installing docker-ce...'", shell=True)
-			
 			outd = sb.getstatusoutput('yum install docker-ce --nobest -y')
-			
+
+			sb.call("echo 'Installing docker-ce...'", shell=True)
+			sleep(1)
 			sb.call("echo 'Enabling container services...", shell=True)
 			
 			sb.call("systemctl enable docker", shell=True)
 			
 			if outd[0] == 0:
 				listd = outd[1].split("\n")
+				sleep(1)
 				if listd[-1] == 'complete!':
+					os.system('tput setaf 2')
 					return 'Docker-ce successfully installed !'
 				else:
+					os.system('tput setaf 1')
 					return 'Installation failed !', outd[1]
 			else:
+				os.system('tput setaf 1')
 				return 'Installtion failed !', outd[1]	
 	else:
+		sleep(1)
+		os.system('tput setaf 6')
 		return 'Docker-ce already installed !'
 
 def pull_docker_images(img_name):
+	os.system('tput setaf 3')
 	sb.call("docker pull {}".format(img_name), shell=True)
 
 def show_docker_images():
+	os.system('tput setaf 3')
 	sb.call("docker images", shell=True)
 
 def display_all_containers():
+	os.system('tput setaf 3')
 	sb.call("docker ps -a", shell=True)
 
 def run_docker_container(os_name,version, title):
+	os.system('tput setaf 3')
 	sb.call("docker run -it --name {} {}:{}".format(title, os_name, version), shell=True)
 
 def remove_all_containers():
+	os.system('tput setaf 3')
 	sb.call("docker rm `docker ps -a -q`", shell=True)
 
 def remove_one_container(id):
+	os.system('tput setaf 3')
 	sb.call("docker rm id {}".format(id), shell=True)
 	print("Successfully Removed {}".format(id))
 
 while True:
-	print("""1.pull_docker_images
-			2.display_all_containers
-			3.run_docker_container
-			4. show_docker_images
-			5. remove_one_container
-			6. remove_all_containers
-			7. configure_namenode_hadoop
-			8. configure_datanode_hadoop
-			9. configure_cluster""")
+	os.system('tput setaf 5')
+	print("""
+			1. Configure Hadoop Namenode
+			2. Configure Hadoop Datanode
+			3. Configure the Whole Cluster
+		""")
+	os.system('tput setaf 10')
+	print("""		
+			4. Show Docker Images
+			5. Pull a Docker Image 
+			6. Show all Containers
+			7. Run Docker Container
+			8. Remove One Container
+			9. Remove all Containers
+		""")
 	choice = int(input('Enter choice: '))
-	if choice == 1:
+	os.system('tput setaf 7')
+	if choice == 5:
 		img_name = input('Enter image name: ')
 		pull_docker_images(img_name)
-	if choice == 2:
+	if choice == 6:
 		display_all_containers()
-	if choice == 3:
+	if choice == 7:
 		os_name = input('Enter os name: ')
 		version = input('Enter os version :')
 		title = input('Enter title name : ')
 		run_docker_container(os_name,version,title)
 	if choice == 4:
 		show_docker_images()
-	if choice == 5: 
+	if choice == 8: 
 		remove_one_container()
-	if choice == 6:
-		remove_all_containers()
-	if choice == 7:
-		configure_namenode_hadoop(1)
-	if choice == 8:
-		configure_datanodes_hadoop(1)
 	if choice == 9:
-		configure_cluster()
+		remove_all_containers()
+	if choice == 1:
+		configure_namenode_hadoop(1)
+	if choice == 2:
+		ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
+		configure_datanodes_hadoop(1, ips)
+	if choice == 3:
+		ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
+		configure_cluster(ips)

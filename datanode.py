@@ -1,4 +1,6 @@
 import subprocess as sb
+from time import sleep
+import os
 
 def file_handeling(file_path, ip, namenode):
         file = open("{}".format(file_path), 'r')
@@ -29,13 +31,19 @@ def file_handeling(file_path, ip, namenode):
         file.write(new_file_content)
 
 def configure_datanode(ip):
+		os.system('tput setaf 3')	
         sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
         file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', False)
+        sleep(1)
         sb.call("echo 'Configured hdfs-site.xml file...'", shell=True)
+        sleep(1)
         sb.call("echo 'Configuring core-site.xml file...'", shell=True)
         file_handeling('/etc/hadoop/core-site.xml', ip, False)
+        sleep(1)
         sb.call("echo 'Configured core-site.xml file...'", shell=True)
+        sleep(1)
         sb.call("echo 'Starting Datanode...'", shell=True)
+        sb.call("rm -rf /nn", shell=True)
         sb.call("echo 3 > /proc/sys/vm/drop_caches", shell=True)
         out = sb.getstatusoutput("hadoop-daemon.sh start datanode")
         if 'running' in out[1]:
@@ -44,15 +52,9 @@ def configure_datanode(ip):
         if out[0] == 0:
             print("Successfully started Datanode...")
         else:
+        	os.system('tput setaf 1')
             print('Something went Wrong !')
             print(out[1])
 
-
-
-
-try:
-    file = open("/home/ec2-user/Automa/ip.txt", 'r')
-except:
-    print("trying exception")
 ip = '65.0.179.192'
 configure_datanode(ip)
