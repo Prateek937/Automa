@@ -51,9 +51,9 @@ def configure_namenode_hadoop(Type):
 	out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
 	
 	if 'running' in out[1]:
-		sb.call("hadoop-daemon.sh stop namenode",shell=True)
+		sb.getstatusoutput("hadoop-daemon.sh stop namenode")
 		out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
-	elif out[0] == 0:
+	if out[0] == 0:
 		sb.call("echo 'Namenode started successfully !'", shell=True)
 	else:
 		print('Something went Wrong !')
@@ -66,12 +66,12 @@ def configure_datanodes_hadoop(Type):
 		file.write(ippp)
 		file.close()
 	ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
+	print(ips)
 
 	for ip in ips:
 
 		if Type == 1:
-			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3" < /home/ec2-user/Automa/gitd.py'.format(ip), shell=True)
-			print("done")
+			sb.getoutput('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3" < /home/ec2-user/Automa/gitd.py'.format(ip))
 			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 /home/ec2-user/Automa/datanode.py"'.format(ip), shell=True)
 		else:
 			sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)
