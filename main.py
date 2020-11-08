@@ -59,6 +59,7 @@ def configure_namenode_hadoop(Type):
 		os.system('tput setaf 1') 
 		print('Something went Wrong while formatting !')
 	sleep(1)
+	os.system('tput setaf 3')
 	sb.call("echo 'Starting Namenode...'", shell=True)
 	sb.call("echo 3 > /proc/sys/vm/drop_caches", shell=True)
 	out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
