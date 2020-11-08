@@ -112,22 +112,15 @@ def docker_install():
 
 			sb.call("echo 'Installing docker-ce...'", shell=True)
 			sleep(1)
-			sb.call("echo 'Enabling container services...", shell=True)
+			sb.call("echo 'Enabling container services...'", shell=True)
 			
-			sb.call("systemctl enable docker", shell=True)
+			sb.getstatusoutput("systemctl enable docker")
+			sb.getstatusoutput("systemctl start docker")
+		
 			
-			if outd[0] == 0:
-				listd = outd[1].split("\n")
-				sleep(1)
-				if listd[-1] == 'complete!':
-					os.system('tput setaf 2')
-					return 'Docker-ce successfully installed !'
-				else:
-					os.system('tput setaf 1')
-					return 'Installation failed !', outd[1]
-			else:
-				os.system('tput setaf 1')
-				return 'Installtion failed !', outd[1]	
+			os.system('tput setaf 2')
+			print('Docker-ce successfully Installed and Starded !')
+					
 	else:
 		sleep(1)
 		os.system('tput setaf 6')
@@ -186,7 +179,8 @@ while True:
 	choice = int(input('Enter choice: '))
 	os.system('tput setaf 7')
 	if choice == 4:
-		docker_install()
+		output = docker_install()
+		print(output)
 	if choice == 6:
 		img_name = input('Enter image name: ')
 		pull_docker_images(img_name)
