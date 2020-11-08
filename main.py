@@ -52,7 +52,7 @@ def configure_namenode_hadoop(Type):
 	
 	if 'running' in out[1]:
 		sb.call("hadoop-daemon.sh stop namenode",shell=True)
-		out = getstatusoutput("hadoop-daemon.sh start namenode")
+		out = sb.etstatusoutput("hadoop-daemon.sh start namenode")
 	elif out[0] == 0:
 		sb.call("echo 'Namenode started successfully !'", shell=True)
 	else:
@@ -68,15 +68,15 @@ def configure_datanodes_hadoop(Type):
 	ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
 	Type = input('Type of Datanode AWS Instance(1)/local(2): ')
 	for ip in ips:
-		out = getstatusoutput("rpm -q git")
+		out = sb.getstatusoutput("rpm -q git")
 		if out[0] == 1:
 			if 'not installed' in out[1]:
 				out = sb.getstatusoutput('yum install git -y')
 				sb.call("echo 'git not found'", shell=True)
 				if 'complete!' in out[1]:
 					sb.call("echo 'Successfully installed git...'", shell=True)
-		out = sb.getstatusoutput("git clone https://github.com/Prateek937/Automa.git", shell=True)
-		if outp[0] == 0:
+		out = sb.getstatusoutput("git clone https://github.com/Prateek937/Automa.git")
+		if out[0] == 0:
 			sb.call("echo 'repository cloned successfully...", shell=True)
 		else: 
 			sb.call("echo 'Repository clone  failed...", shell=True)
@@ -168,6 +168,6 @@ while True:
 	if choice == 7:
 		configure_namenode_hadoop(1)
 	if choice == 8:
-		configure_datanode_hadoop(1)
+		configure_datanodes_hadoop(1)
 	if choice == 9:
 		configure_cluster()
