@@ -159,38 +159,49 @@ def remove_one_container(id):
 	print("Successfully Removed {}".format(id))
 
 while True:
-	os.system('tput setaf 5')
+	os.system('tput setaf 10')
 	print("""
+		Features:
+		-----------------------------------------------------
+			Hadoop:
+		-----------------------------------------------------	
 			1. Configure Hadoop Namenode
 			2. Configure Hadoop Datanode
 			3. Configure the Whole Cluster
+		-----------------------------------------------------
 		""")
-	os.system('tput setaf 10')
-	print("""		
-			4. Show Docker Images
-			5. Pull a Docker Image 
-			6. Show all Containers
-			7. Run Docker Container
-			8. Remove One Container
-			9. Remove all Containers
+	os.system('tput setaf 4')
+	print("""
+			Docker:
+		-----------------------------------------------------
+			4. Install Docker-ce		
+			5. Show Docker Images
+			6. Pull a Docker Image 
+			7. Show all Containers
+			8. Run Docker Container
+			9. Remove One Container
+			10. Remove all Containers
+		-----------------------------------------------------
 		""")
 	choice = int(input('Enter choice: '))
 	os.system('tput setaf 7')
-	if choice == 5:
+	if choice == 4:
+		docker_install()
+	if choice == 6:
 		img_name = input('Enter image name: ')
 		pull_docker_images(img_name)
-	if choice == 6:
-		display_all_containers()
 	if choice == 7:
+		display_all_containers()
+	if choice == 8:
 		os_name = input('Enter os name: ')
 		version = input('Enter os version :')
 		title = input('Enter title name : ')
 		run_docker_container(os_name,version,title)
-	if choice == 4:
+	if choice == 5:
 		show_docker_images()
-	if choice == 8: 
+	if choice == 9: 
 		remove_one_container()
-	if choice == 9:
+	if choice == 10:
 		remove_all_containers()
 	if choice == 1:
 		configure_namenode_hadoop(1)

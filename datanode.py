@@ -32,7 +32,7 @@ def file_handeling(file_path, ip, namenode):
     file.write(new_file_content)
 
 def configure_datanode(ip):
-	os.system('tput setaf 3')
+	#os.system('tput setaf 3')
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
 	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', False)
 	sleep(1)
@@ -53,7 +53,7 @@ def configure_datanode(ip):
 	if out[0] == 0:
 		print("Successfully started Datanode...")
 	else:
-		os.system('tput setaf 1')
+		#os.system('tput setaf 1')
 		print('Something went Wrong !')
 		print(out[1])
 
