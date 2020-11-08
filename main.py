@@ -1,5 +1,5 @@
 import subprocess as sb
-
+from gitd import gitclone
 def file_handeling(file_path, ip, namenode):
 	file = open("{}".format(file_path), 'r')
 	string_list = file.readlines()
@@ -66,10 +66,11 @@ def configure_datanodes_hadoop(Type):
 		file.write(ippp)
 		file.close()
 	ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
-	Type = input('Type of Datanode AWS Instance(1)/local(2): ')
+
 	for ip in ips:
 
 		if type == 1:
+			gitclone(ip)
 			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 /home/ec2-user/Automa/datanode.py"'.format(ip), shell=True)
 		else:
 			sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)
