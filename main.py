@@ -105,7 +105,7 @@ def docker_install():
 			os.system('tput setaf 3')
 			sb.call("echo 'Fetching Repository...'", shell=True)
 
-			sb.call("echo 'y' | cp /root/dockercw123.repo /etc/yum.repos.d/", shell=True)
+			sb.call("echo 'y' | cp /home/ec2-user/Automa/dockercw123.repo /etc/yum.repos.d/", shell=True)
 			sleep(1)
 			sb.call("echo 'Downloading docker-ce, please wait ...'", shell=True)
 			outd = sb.getstatusoutput('yum install docker-ce --nobest -y')
