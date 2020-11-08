@@ -29,12 +29,16 @@ def file_handeling(file_path, ip, namenode):
 	file.write(new_file_content)
 	file.close()
 
-def configure_namenode_hadoop():
-	ip = input('Enter the ip of namenode : ')
+def configure_namenode_hadoop(Type):
+	if Type == 1:
+		ip = '0.0.0.0'
+	else:
+		ip = input('Enter the ip of namenode : ')
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
 	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', True)
 	sb.call("echo 'ConfiguredConfigured hdfs-site.xml file...'", shell=True)
 	sb.call("echo 'Configuring core-site.xml file...'", shell=True)
+
 	file_handeling('/etc/hadoop/core-site.xml', ip, True)
 	sb.call("echo 'Configured core-site.xml file...'", shell=True)
 	sb.call("echo 'Formatting Namenode...'", shell=True)
@@ -47,24 +51,41 @@ def configure_namenode_hadoop():
 	out = sb.getstatusoutput("hadoop-daemon.sh start namenode")
 	if out[0] == 0:
 		sb.call("echo 'Namenode started successfully !'", shell=True)
-	else: print('Something went Wrong !')
+	else:
+		print('Something went Wrong !')
+		print(out[1])
 
-def configure_datanodes_hadoop():
-	ip = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
+def configure_datanodes_hadoop(Type):
+	ippp = input('Enter the ip of namenode : ')
+	if Type == 1:
+		file = open('/home/ec2-user/Automa/ip.txt', 'w')
+		file.write(ippp)
+		file.close()
+	ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
 	Type = input('Type of Datanode AWS Instance(1)/local(2): ')
-	
+	for ip in ips:
+		out = getstatusoutput("rpm -q git")
+		if out[0] == 1:
+			if 'not installed' in out[1]:
+				out = sb.getstatusoutput('yum install git -y')
+				sb.call("echo 'git not found'", shell=True)
+				if 'complete!' in out[1]:
+					sb.call("echo 'Successfully installed git...'", shell=True)
+		out = sb.getstatusoutput("git clone https://github.com/Prateek937/Automa.git", shell=True)
+		if outp[0] == 0:
+			sb.call("echo 'repository cloned successfully...", shell=True)
+		else: 
+			sb.call("echo 'Repository clone  failed...", shell=True)
+			print(out[1])
 
-
-
-
-
-my_file = open("data.txt", "w")
-new_file_contents = "".join(string_list)
-Convert `string_list` to a single string
-
-my_file.write(new_file_contents)
-my_file.close()
-
+		if type == 1:
+			sb.call('ssh -i -o StrictHostKeyChecking=No /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 datanode.py"'.format(ip), shell=True)
+		else:
+			sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)
+def configure_cluster():
+	configure_namenode_hadoop(1)
+	configure_datanodes_hadoop(1)
+	sb.call("hadoop dfsadmin -report", shell=True)
 
 def docker_install():
 	output = sb.getstatusoutput('rpm -q docker-ce')
@@ -113,9 +134,16 @@ def remove_one_container(id):
 	sb.call("docker rm id {}".format(id), shell=True)
 	print("Successfully Removed {}".format(id))
 
-out = docker_install()
-print(out)
 while True:
+	print("""1.pull_docker_images
+			2.display_all_containers
+			3.run_docker_container
+			4. show_docker_images
+			5. remove_one_container
+			6. remove_all_containers
+			7. configure_namenode_hadoop
+			8. configure_datanode_hadoop
+			9. configure_cluster""")
 	choice = int(input('Enter choice: '))
 	if choice == 1:
 		img_name = input('Enter image name: ')
@@ -133,3 +161,9 @@ while True:
 		remove_one_container()
 	if choice == 6:
 		remove_all_containers()
+	if choice == 7:
+		configure_namenode_hadoop(1)
+	if choice == 8:
+		configure_datanode_hadoop(1)
+	if choice == 9:
+		configure_cluster()
