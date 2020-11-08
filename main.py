@@ -70,7 +70,7 @@ def configure_datanodes_hadoop(Type):
 	for ip in ips:
 
 		if type == 1:
-			sb.call('ssh -i -o StrictHostKeyChecking=No /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 datanode.py"'.format(ip), shell=True)
+			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 /home/ec2-user/Automa/datanode.py"'.format(ip), shell=True)
 		else:
 			sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)
 def configure_cluster():
