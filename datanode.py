@@ -34,7 +34,7 @@ def file_handeling(file_path, ip, namenode):
 def configure_datanode(ip):
 	os.system('tput setaf 3')
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
-    file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', False)
+	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', False)
     sleep(1)
     sb.call("echo 'Configured hdfs-site.xml file...'", shell=True)
     sleep(1)
