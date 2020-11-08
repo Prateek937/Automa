@@ -1,6 +1,4 @@
 import subprocess as sb
-def gitclone(ip):
-	sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3" < /home/ec2-user/Automa/gitd.py'.format(ip), shell=True)
 
 out = sb.getstatusoutput("rpm -q git")
 if out[0] == 1:

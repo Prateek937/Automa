@@ -1,5 +1,5 @@
 import subprocess as sb
-from gitd import gitclone
+
 def file_handeling(file_path, ip, namenode):
 	file = open("{}".format(file_path), 'r')
 	string_list = file.readlines()
@@ -32,8 +32,8 @@ def file_handeling(file_path, ip, namenode):
 def configure_namenode_hadoop(Type):
 	if Type == 1:
 		ip = '0.0.0.0'
-	else:
-		ip = input('Enter the ip of namenode : ')
+	#else:
+	#	ip = input('Enter the ip of namenode : ')
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
 	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', True)
 	sb.call("echo 'ConfiguredConfigured hdfs-site.xml file...'", shell=True)
@@ -60,7 +60,7 @@ def configure_namenode_hadoop(Type):
 		print(out[1])
 
 def configure_datanodes_hadoop(Type):
-	ippp = input('Enter the ip of namenode : ')
+	ippp = input("Enter the ip of namenode : ")
 	if Type == 1:
 		file = open('/home/ec2-user/Automa/ip.txt', 'w')
 		file.write(ippp)
@@ -69,8 +69,9 @@ def configure_datanodes_hadoop(Type):
 
 	for ip in ips:
 
-		if type == 1:
-			gitclone(ip)
+		if Type == 1:
+			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3" < /home/ec2-user/Automa/gitd.py'.format(ip), shell=True)
+			print("done")
 			sb.call('ssh -o StrictHostKeyChecking=No -i /home/ec2-user/Automa/aws2.pem ec2-user@{} "sudo python3 /home/ec2-user/Automa/datanode.py"'.format(ip), shell=True)
 		else:
 			sb.call('ssh root@{} "sudo python3 datanode.py"'.format(ip), shell=True)

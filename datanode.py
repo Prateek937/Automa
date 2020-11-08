@@ -1,4 +1,4 @@
-from main.py import file_handeling
+from main import file_handeling
 
 def configure_datanode(ip):
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
@@ -18,7 +18,7 @@ def configure_datanode(ip):
 
 
 try:
-	file = open("/home/ec2-user/ip.txt", 'r')
+	file = open("/home/ec2-user/Automa/ip.txt", 'r')
 except:
 	print("trying exception")
 	file = open("/root/Automa/ip.txt", 'r')
