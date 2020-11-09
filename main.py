@@ -38,6 +38,7 @@ def configure_namenode_hadoop(Type):
 	ip = input('Enter the ip of namenode : ')
 	sleep(1)
 	os.system('tput setaf 3')
+	sb.call("echo '[Namenode] ", shell=True)
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
 
 	file_handeling('/etc/hadoop/hdfs-site.xml', '0.0.0.0', True)
@@ -151,6 +152,26 @@ def remove_one_container(id):
 	sb.call("docker rm id {}".format(id), shell=True)
 	print("Successfully Removed {}".format(id))
 
+def configure_apache_webserver():
+	out = sb.getstatusoutput("rpm -q httpd")
+	if out[0] == 1:
+        if 'not installed' in out[1]:
+        	sb.call("echo 'Installing httpd service....'", shell=True)
+            out = sb.getstatusoutput('yum install httpd -y')
+                
+            if 'complete!' in out[1]:
+                sb.call("echo 'Successfully installed httpd...'", shell=True)
+    else:
+    	sb.call("echo 'Configuring Web server...", shell=True)
+    	out = sb.getstatusoutput('yum install httpd -y')
+    	if 'complete!' in out[1]:
+            sb.call("echo 'Successfully installed httpd...'", shell=True)
+        sb.call("echo 'Enabling service...", shell= True)
+        sleep(1)
+        sb.getstatusoutput("systemctl start httpd")
+        sb.call("echo 'Started the service Successfully....", shell=True)
+        sleep(1)
+        sb.call("systemctl status httpd", shell=True)
 while True:
 	os.system('tput setaf 10')
 	print("""
@@ -175,6 +196,12 @@ while True:
 			9. Remove One Container
 			10. Remove all Containers
 		-----------------------------------------------------
+		""")
+	os.system('tput setaf 5')
+	print("""
+			Apache Web Server
+		-----------------------------------------------------
+			11. Configure Webserver
 		""")
 	choice = int(input('Enter choice: '))
 	os.system('tput setaf 7')
@@ -205,3 +232,5 @@ while True:
 	if choice == 3:
 		ips = list(input('Enter IPs of Datanodes separated by space : ').split(" "))
 		configure_cluster(ips)
+	if choice == 11:
+		configure_apache_webserver()
