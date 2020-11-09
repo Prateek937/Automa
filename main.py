@@ -35,7 +35,7 @@ def configure_namenode_hadoop(Type):
 	# if Type == 1:
 	# 	ip = '192.168.43.194'
 	#else:
-	ip = input('Enter the ip of namenode : ')
+	ip = '0.0.0.0'
 	sleep(1)
 	os.system('tput setaf 3')
 	sb.call("echo '[Namenode] ", shell=True)
@@ -155,23 +155,22 @@ def remove_one_container(id):
 def configure_apache_webserver():
 	out = sb.getstatusoutput("rpm -q httpd")
 	if out[0] == 1:
-        if 'not installed' in out[1]:
-        	sb.call("echo 'Installing httpd service....'", shell=True)
-            out = sb.getstatusoutput('yum install httpd -y')
-                
-            if 'complete!' in out[1]:
-                sb.call("echo 'Successfully installed httpd...'", shell=True)
-    else:
-    	sb.call("echo 'Configuring Web server...", shell=True)
-    	out = sb.getstatusoutput('yum install httpd -y')
-    	if 'complete!' in out[1]:
-            sb.call("echo 'Successfully installed httpd...'", shell=True)
-        sb.call("echo 'Enabling service...", shell= True)
-        sleep(1)
-        sb.getstatusoutput("systemctl start httpd")
-        sb.call("echo 'Started the service Successfully....", shell=True)
-        sleep(1)
-        sb.call("systemctl status httpd", shell=True)
+		if 'not installed' in out[1]:
+			sb.call("echo 'Installing httpd service....'", shell=True)
+			out = sb.getstatusoutput('yum install httpd -y')
+			if 'complete!' in out[1]:
+				sb.call("echo 'Successfully installed httpd...'", shell=True)
+	else:
+		sb.call("echo 'Configuring Web server...", shell=True)
+		out = sb.getstatusoutput('yum install httpd -y')
+		if 'complete!' in out[1]:
+			sb.call("echo 'Successfully installed httpd...'", shell=True)
+		sb.call("echo 'Enabling service...", shell= True)
+		sleep(1)
+		sb.getstatusoutput("systemctl start httpd")
+		sb.call("echo 'Started the service Successfully....", shell=True)
+		sleep(1)
+		sb.call("systemctl status httpd", shell=True)
 while True:
 	os.system('tput setaf 10')
 	print("""
