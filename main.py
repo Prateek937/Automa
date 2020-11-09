@@ -32,10 +32,10 @@ def file_handeling(file_path, ip, namenode):
 	file.close()
 
 def configure_namenode_hadoop(Type):
-	if Type == 1:
-		ip = '0.0.0.0'
+	# if Type == 1:
+	# 	ip = '192.168.43.194'
 	#else:
-	#	ip = input('Enter the ip of namenode : ')
+	ip = input('Enter the ip of namenode : ')
 	sleep(1)
 	os.system('tput setaf 3')
 	sb.call("echo 'Configuring hdfs-site.xml file...'", shell=True)
